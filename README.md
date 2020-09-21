@@ -4,4 +4,4 @@ Also star the project if you like it!
 
 ## Project List
 * Pomodoro Timer
-*More soon...*
+* *More soon...*
