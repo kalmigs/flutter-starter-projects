@@ -20,76 +20,80 @@ class TimerController extends GetxController {
   final isBreak = false.obs;
   final isLBreak = false.obs;
 
-  StreamSubscription timerSub;
-  int _pCounter = 0;
+  StreamSubscription _timerSub;
   bool _next = false;
-  int pDuration = 0;
-  int sBreak = 0;
-  int lBreak = 0;
-  int pCount = 0;
+  int _pCounter = 0;
+  int _pDuration = 0;
+  int _sBreak = 0;
+  int _lBreak = 0;
+  int _pCount = 0;
 
-  void getValuesFromCache() {
-    pDuration =
+  // Get pomodoro/break time & count values from SharedPrefs Cache
+  void _getValuesFromCache() {
+    _pDuration =
         Settings.getValue<double>(keyPDuration, defaultPDuration.toDouble())
             .round();
-    sBreak =
+    _sBreak =
         Settings.getValue<double>(keySBreak, defaultSBreak.toDouble()).round();
-    lBreak =
+    _lBreak =
         Settings.getValue<double>(keyLBreak, defaultLBreak.toDouble()).round();
-    pCount =
+    _pCount =
         Settings.getValue<double>(keyPCount, defaultPCount.toDouble()).round();
   }
 
-  stop() {
-    minutes.value = pDuration.toString().padLeft(2, '0');
+  // Stop pomodoro/break timer
+  void stop() {
+    minutes.value = _pDuration.toString().padLeft(2, '0');
     seconds.value = '00';
     percentage.value = 1.0;
     isPause.value = false;
     isBreak.value = false;
     isLBreak.value = false;
 
-    timerSub.cancel();
-    timerSub = null;
+    _timerSub.cancel();
+    _timerSub = null;
     _pCounter = 0;
     _next = false;
   }
 
-  play() {
-    getValuesFromCache();
+  // Start pomodoro timer
+  void play() {
+    _getValuesFromCache();
 
-    minutes.value = pDuration.toString();
+    minutes.value = _pDuration.toString().padLeft(2, '0');
     seconds.value = '00';
     percentage.value = 1;
 
     _pCounter++;
-    if (_pCounter >= pCount) isLBreak.value = true;
+    if (_pCounter >= _pCount) isLBreak.value = true;
 
-    timerSub = timeStream(pDuration * 60).listen((event) {
+    _timerSub = _timeStream(_pDuration * 60).listen((event) {
       if (event < 0) {
         isBreak.value = !isBreak.value;
 
         minutes.value =
-            ((isLBreak.value) ? lBreak : sBreak).toString().padLeft(2, '0');
+            ((isLBreak.value) ? _lBreak : _sBreak).toString().padLeft(2, '0');
         seconds.value = '00';
         percentage.value = 1;
 
-        breakTime();
+        _breakTime();
       } else {
         minutes.value = (event / 60).floor().toString().padLeft(2, '0');
         seconds.value = (event % 60).floor().toString().padLeft(2, '0');
-        percentage.value = event / (pDuration * 60);
+        percentage.value = event / (_pDuration * 60);
       }
     });
   }
 
-  breakTime() {
-    timerSub =
-        timeStream(((isLBreak.value) ? lBreak : sBreak) * 60).listen((event) {
+  // Start break timer after every pomodoro timer
+  void _breakTime() {
+    _timerSub = _timeStream(((isLBreak.value) ? _lBreak : _sBreak) * 60)
+        .listen((event) {
       if (event < 0) {
         isBreak.value = !isBreak.value;
         isPause.value = true;
 
-        minutes.value = pDuration.toString().padLeft(2, '0');
+        minutes.value = _pDuration.toString().padLeft(2, '0');
         seconds.value = '00';
         percentage.value = 1;
 
@@ -102,25 +106,28 @@ class TimerController extends GetxController {
       } else {
         minutes.value = (event / 60).floor().toString().padLeft(2, '0');
         seconds.value = (event % 60).floor().toString().padLeft(2, '0');
-        percentage.value = event / (((isLBreak.value) ? lBreak : sBreak) * 60);
+        percentage.value =
+            event / (((isLBreak.value) ? _lBreak : _sBreak) * 60);
       }
     });
   }
 
-  toggle() {
+  // toggle button for play/pause
+  void togglePlayPause() {
     isPause.value = !isPause.value;
 
     if (_next) {
       play();
     } else {
       if (isPause.value)
-        timerSub.pause();
+        _timerSub.pause();
       else
-        timerSub.resume();
+        _timerSub.resume();
     }
   }
 
-  Stream<int> timeStream(int seconds) {
+  // returns a stream of value in time in seconds(int)
+  Stream<int> _timeStream(int seconds) {
     StreamController<int> streamController;
     Timer timer;
     Duration timerInterval = Duration(seconds: 1);
@@ -163,10 +170,11 @@ class TimerController extends GetxController {
     return streamController.stream;
   }
 
+  // dispose timer subscription
   @override
   void disposeId(String id) {
-    timerSub?.cancel();
-    timerSub = null;
+    _timerSub?.cancel();
+    _timerSub = null;
 
     super.disposeId(id);
   }

@@ -1,6 +1,9 @@
 # pomodoro_timer
 
 Pomodoro timer helps you become more efficient in work and/or study
+* State management: GetX
+* Uses Timer/Streams to generate pomodoro/break timers
+* Has settings to change duration/count parameters
 
 ## Getting Started
 

@@ -24,7 +24,7 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  _bodyPlay(BuildContext context) => Container(
+  Widget _bodyPlay(BuildContext context) => Container(
         constraints: BoxConstraints.expand(),
         child: Obx(() => Center(
               child: Column(
@@ -59,7 +59,7 @@ class HomePage extends StatelessWidget {
             )),
       );
 
-  _footer() => Container(
+  Widget _footer() => Container(
         padding: const EdgeInsets.only(top: 10.0),
         child: Row(
           mainAxisSize: MainAxisSize.min,
@@ -68,7 +68,7 @@ class HomePage extends StatelessWidget {
               icon: Obx(() => (_cTimer.isPause.value)
                   ? Icon(Icons.play_arrow)
                   : Icon(Icons.pause)),
-              onPressed: _cTimer.toggle,
+              onPressed: _cTimer.togglePlayPause,
             ),
             IconButton(
               icon: Icon(Icons.stop),
@@ -81,7 +81,7 @@ class HomePage extends StatelessWidget {
         ),
       );
 
-  _bodyStart() => GestureDetector(
+  Widget _bodyStart() => GestureDetector(
         onTap: () {
           _cApp.toggleIsPlayed();
           _cTimer.play();
@@ -91,7 +91,8 @@ class HomePage extends StatelessWidget {
         ),
       );
 
-  _options(BuildContext context) => Align(
+  // Show "More Options" button at top right of homepage
+  Widget _options(BuildContext context) => Align(
         alignment: Alignment.topRight,
         child: PopupMenuButton<String>(
           icon: Icon(Icons.more_vert),
@@ -107,7 +108,7 @@ class HomePage extends StatelessWidget {
         ),
       );
 
-  _optionChoice(String selected) {
+  void _optionChoice(String selected) {
     if (selected == option1) Get.to(SettingsPage());
   }
 }

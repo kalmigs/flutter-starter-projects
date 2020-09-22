@@ -21,9 +21,8 @@ class SettingsPage extends StatelessWidget {
     );
   }
 
-  _body() => Container(
+  Widget _body() => Container(
         constraints: BoxConstraints.expand(),
-//        color: Colors.white,
         child: Column(
           children: [
             SliderSettingsTile(
@@ -59,10 +58,10 @@ class SettingsPage extends StatelessWidget {
               step: 1,
             ),
             SimpleSettingsTile(
-              title: 'Reset Default',
+              title: 'Reset to Default',
               subtitle: '',
               onTap: () async {
-                bool choice = await popupChoice();
+                bool choice = await _popupChoice();
                 if (choice ?? false) {
                   Settings.clearCache();
                   Get.back();
@@ -73,7 +72,8 @@ class SettingsPage extends StatelessWidget {
         ),
       );
 
-  Future<bool> popupChoice() async {
+  // if "yes" is selected, we restore default values for the pomodoro timer
+  Future<bool> _popupChoice() async {
     bool choice = false;
     await Get.defaultDialog(
       title: '',
