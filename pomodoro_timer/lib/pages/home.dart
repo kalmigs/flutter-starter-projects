@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
-import 'package:pomodoro_timer/app_controller.dart';
+import 'package:pomodoro_timer/controllers/app_controller.dart';
+import 'package:pomodoro_timer/controllers/timer_controller.dart';
+import 'package:pomodoro_timer/pages/settings.dart';
 
-class Home extends StatelessWidget {
-  final AppController _cApp = Get.put(AppController());
-  final TimerController _cTimer = Get.put(TimerController());
+class HomePage extends StatelessWidget {
+  static const option1 = 'Settings';
+
+  final AppController _cApp = Get.find<AppController>();
+  final TimerController _cTimer = Get.find<TimerController>();
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +18,7 @@ class Home extends StatelessWidget {
           body: Obx(() => (!_cApp.isPlayed.value)
               ? Stack(children: [
                   _bodyStart(),
-                  _settings(context),
+                  _options(context),
                 ])
               : _bodyPlay(context))),
     );
@@ -87,11 +91,23 @@ class Home extends StatelessWidget {
         ),
       );
 
-  _settings(BuildContext context) => Align(
+  _options(BuildContext context) => Align(
         alignment: Alignment.topRight,
-        child: IconButton(
+        child: PopupMenuButton<String>(
           icon: Icon(Icons.more_vert),
-          onPressed: () {},
+          onSelected: (selected) => _optionChoice(selected),
+          itemBuilder: (context) => <PopupMenuItem<String>>[
+            PopupMenuItem(
+              value: option1,
+              child: Text(option1),
+            ),
+          ],
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(5))),
         ),
       );
+
+  _optionChoice(String selected) {
+    if (selected == option1) Get.to(SettingsPage());
+  }
 }
