@@ -4,5 +4,6 @@ A collection of simple but complete flutter app projects. Please star the projec
 
 ## Project List
 
-* Pomodoro Timer (GetX)
+* Pomodoro Timer
+* Exercise Timer
 * *More soon...*
