@@ -8,8 +8,8 @@ import 'package:pomodoro_timer/pages/settings.dart';
 class HomePage extends StatelessWidget {
   static const option1 = 'Settings';
 
-  final AppController _cApp = Get.find<AppController>();
-  final TimerController _cTimer = Get.find<TimerController>();
+  final AppController _cApp = Get.put(AppController());
+  final TimerController _cTimer = Get.put(TimerController());
 
   @override
   Widget build(BuildContext context) {
