@@ -1,5 +1,6 @@
 import 'package:exercise_timer/modules/home/home_controller.dart';
 import 'package:exercise_timer/theme/colors.dart';
+import 'package:exercise_timer/utils/enums.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -7,6 +8,7 @@ import 'package:google_fonts/google_fonts.dart';
 class HomePage extends GetView<HomeController> {
   final TextStyle tsHeader = TextStyle(fontSize: 25, color: colorPrimary);
   final TextStyle tsNumber = GoogleFonts.shareTechMono(fontSize: 70);
+  static const double buttonSize = 50.0;
 
   @override
   Widget build(BuildContext context) {
@@ -16,18 +18,18 @@ class HomePage extends GetView<HomeController> {
         width: Get.context.width,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            _exercise(context),
+            _exercise,
             _rest,
             _laps,
+            _buttons,
           ],
         ),
       ),
     );
   }
 
-  Widget _exercise(BuildContext context) {
+  Widget get _exercise {
     return GestureDetector(
       child: Column(
         children: [
@@ -61,5 +63,37 @@ class HomePage extends GetView<HomeController> {
       ),
       onTap: controller.editLapCount,
     );
+  }
+
+  Widget get _buttons {
+    return Obx(() => (controller.appState == AppState.notStarted)
+        ? MaterialButton(
+            child: Icon(
+              Icons.play_arrow_rounded,
+              size: buttonSize,
+            ),
+            onPressed: controller.play,
+          )
+        : Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              MaterialButton(
+                child: Icon(
+                  controller.appState == AppState.startedPlay
+                      ? Icons.pause_rounded
+                      : controller.play,
+                  size: buttonSize,
+                ),
+                onPressed: controller.pause,
+              ),
+              MaterialButton(
+                child: Icon(
+                  Icons.stop_rounded,
+                  size: buttonSize,
+                ),
+                onPressed: controller.stop,
+              )
+            ],
+          ));
   }
 }
