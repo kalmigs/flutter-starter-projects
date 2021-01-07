@@ -1,20 +1,19 @@
+import 'package:exercise_timer/modules/home/home_controller.dart';
 import 'package:exercise_timer/theme/colors.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_picker/flutter_picker.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends GetView<HomeController> {
   final TextStyle tsHeader = TextStyle(fontSize: 25, color: colorPrimary);
   final TextStyle tsNumber = GoogleFonts.shareTechMono(fontSize: 70);
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      key: _scaffoldKey,
+      key: controller.scaffoldKey,
       body: Container(
-        width: double.infinity,
+        width: Get.context.width,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -33,37 +32,10 @@ class HomePage extends StatelessWidget {
       child: Column(
         children: [
           Text('Exercise', style: tsHeader),
-          Text('15:00', style: tsNumber),
+          Obx(() => Text(controller.exerciseDisplayed, style: tsNumber)),
         ],
       ),
-      onTap: () {
-        Picker picker = Picker(
-            adapter: PickerDataAdapter<String>(
-              pickerdata: [
-                List.generate(60, (index) => index),
-                List.generate(60, (index) => index),
-              ],
-              isArray: true,
-            ),
-            title: Padding(
-              padding: const EdgeInsets.only(top: 10.0),
-              child: Text("Exercise Timer",
-                  style: TextStyle(fontSize: 25, color: colorPrimary)),
-            ),
-            selecteds: [3, 3],
-            cancelTextStyle: TextStyle(color: colorBlack, fontSize: 20),
-            confirmTextStyle: TextStyle(color: colorBlack, fontSize: 20),
-            textStyle: TextStyle(color: colorBlack),
-            textAlign: TextAlign.left,
-            selectedTextStyle: TextStyle(color: colorPrimary),
-            columnPadding: const EdgeInsets.all(8.0),
-            height: Get.height / 3,
-            onConfirm: (Picker picker, List value) {
-              print(value.toString());
-              print(picker.getSelectedValues());
-            });
-        picker.show(_scaffoldKey.currentState);
-      },
+      onTap: controller.editExerciseTimer,
     );
   }
 
@@ -72,9 +44,10 @@ class HomePage extends StatelessWidget {
       child: Column(
         children: [
           Text('Rest', style: tsHeader),
-          Text('00:30', style: tsNumber),
+          Obx(() => Text(controller.restDisplayed, style: tsNumber)),
         ],
       ),
+      onTap: controller.editRestTimer,
     );
   }
 
@@ -83,9 +56,10 @@ class HomePage extends StatelessWidget {
       child: Column(
         children: [
           Text('Laps', style: tsHeader),
-          Text('05', style: tsNumber),
+          Obx(() => Text(controller.lapsDisplayed, style: tsNumber)),
         ],
       ),
+      onTap: controller.editLapCount,
     );
   }
 }

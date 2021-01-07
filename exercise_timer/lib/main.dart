@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import 'modules/home/home_binding.dart';
 import 'modules/home/home_page.dart';
 import 'theme/colors.dart';
 
@@ -17,6 +18,7 @@ class MyApp extends StatelessWidget {
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       home: HomePage(),
+      initialBinding: HomeBinding(),
       debugShowCheckedModeBanner: false,
     );
   }
