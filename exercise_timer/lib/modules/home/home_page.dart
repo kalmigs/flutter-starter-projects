@@ -7,7 +7,9 @@ import 'package:google_fonts/google_fonts.dart';
 
 class HomePage extends GetView<HomeController> {
   final TextStyle tsHeader = TextStyle(fontSize: 25, color: colorPrimary);
-  final TextStyle tsNumber = GoogleFonts.shareTechMono(fontSize: 70);
+  final TextStyle tsNumberStopped = GoogleFonts.shareTechMono(fontSize: 70);
+  final TextStyle tsNumberStarted = GoogleFonts.shareTechMono(fontSize: 140);
+  final TextStyle tsNumberSmall = GoogleFonts.shareTechMono(fontSize: 35);
   static const double buttonSize = 50.0;
 
   @override
@@ -16,14 +18,20 @@ class HomePage extends GetView<HomeController> {
       key: controller.scaffoldKey,
       body: Container(
         width: Get.context.width,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            _exercise,
-            _rest,
-            _laps,
-            _buttons,
-          ],
+        child: Obx(
+          () => Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              if (controller.appState == AppState.stopped ||
+                  controller.isExercise)
+                _exercise,
+              if (controller.appState == AppState.stopped ||
+                  !controller.isExercise)
+                _rest,
+              if (controller.appState == AppState.stopped) _laps,
+              _buttons,
+            ],
+          ),
         ),
       ),
     );
@@ -34,7 +42,15 @@ class HomePage extends GetView<HomeController> {
       child: Column(
         children: [
           Text('Exercise', style: tsHeader),
-          Obx(() => Text(controller.exerciseDisplayed, style: tsNumber)),
+          Text(controller.exerciseDisplayed,
+              style: controller.appState == AppState.stopped
+                  ? tsNumberStopped
+                  : tsNumberStarted),
+          if (!(controller.appState == AppState.stopped))
+            Text(
+              controller.lapCount.toString() + '/' + controller.lapsDisplayed,
+              style: tsNumberSmall,
+            ),
         ],
       ),
       onTap: controller.editExerciseTimer,
@@ -46,7 +62,15 @@ class HomePage extends GetView<HomeController> {
       child: Column(
         children: [
           Text('Rest', style: tsHeader),
-          Obx(() => Text(controller.restDisplayed, style: tsNumber)),
+          Text(controller.restDisplayed,
+              style: controller.appState == AppState.stopped
+                  ? tsNumberStopped
+                  : tsNumberStarted),
+          if (!(controller.appState == AppState.stopped))
+            Text(
+              controller.lapCount.toString() + '/' + controller.lapsDisplayed,
+              style: tsNumberSmall,
+            ),
         ],
       ),
       onTap: controller.editRestTimer,
@@ -58,7 +82,7 @@ class HomePage extends GetView<HomeController> {
       child: Column(
         children: [
           Text('Laps', style: tsHeader),
-          Obx(() => Text(controller.lapsDisplayed, style: tsNumber)),
+          Text(controller.lapsDisplayed, style: tsNumberStopped),
         ],
       ),
       onTap: controller.editLapCount,
@@ -66,7 +90,7 @@ class HomePage extends GetView<HomeController> {
   }
 
   Widget get _buttons {
-    return Obx(() => (controller.appState == AppState.notStarted)
+    return (controller.appState == AppState.stopped)
         ? MaterialButton(
             child: Icon(
               Icons.play_arrow_rounded,
@@ -81,7 +105,7 @@ class HomePage extends GetView<HomeController> {
                 child: Icon(
                   controller.appState == AppState.startedPlay
                       ? Icons.pause_rounded
-                      : controller.play,
+                      : Icons.play_arrow_rounded,
                   size: buttonSize,
                 ),
                 onPressed: controller.pause,
@@ -94,6 +118,6 @@ class HomePage extends GetView<HomeController> {
                 onPressed: controller.stop,
               )
             ],
-          ));
+          );
   }
 }

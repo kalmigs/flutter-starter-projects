@@ -1,1 +1,1 @@
-enum AppState { notStarted, startedPlay, startedPaused, stopped }
+enum AppState { stopped, startedPlay, startedPaused }

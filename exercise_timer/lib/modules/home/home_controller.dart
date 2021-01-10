@@ -22,6 +22,9 @@ class HomeController extends GetxController {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   StreamSubscription _countDownSub;
 
+  int lapCount = 0;
+  bool isExercise = true;
+
   get _eMin => _sp.getInt(AppConst.eMinStr);
   get _eSec => _sp.getInt(AppConst.eSecStr);
   get _rMin => _sp.getInt(AppConst.rMinStr);
@@ -37,7 +40,7 @@ class HomeController extends GetxController {
   get exerciseDisplayed => this._exerciseDisplayed.value;
   set exerciseDisplayed(value) => this._exerciseDisplayed.value = value;
 
-  final _restDisplayed = '00:30'.obs;
+  final _restDisplayed = ''.obs;
   get restDisplayed => this._restDisplayed.value;
   set restDisplayed(value) => this._restDisplayed.value = value;
 
@@ -45,7 +48,7 @@ class HomeController extends GetxController {
   get lapsDisplayed => this._lapsDisplayed.value;
   set lapsDisplayed(value) => this._lapsDisplayed.value = value;
 
-  final _appState = AppState.notStarted.obs;
+  final _appState = AppState.stopped.obs;
   get appState => this._appState.value;
   set appState(value) => this._appState.value = value;
 
@@ -65,7 +68,9 @@ class HomeController extends GetxController {
 
   _clearFields() {
     _countDownSub?.cancel();
-    appState = AppState.notStarted;
+    appState = AppState.stopped;
+    lapCount = 0;
+    isExercise = true;
     if (_eMin == null) {
       // should have more checking, but this is only a test
       _eMin = AppConst.eMin;
@@ -76,7 +81,8 @@ class HomeController extends GetxController {
     }
     exerciseDisplayed = intTimeToString(_eMin, _eSec);
     restDisplayed = intTimeToString(_rMin, _rSec);
-    lapsDisplayed = (_laps).toString().padLeft(2, '0');
+    // lapsDisplayed = (_laps).toString().padLeft(2, '0');
+    lapsDisplayed = _laps.toString();
   }
 
   void editExerciseTimer() {
@@ -144,7 +150,8 @@ class HomeController extends GetxController {
         height: Get.height / 3,
         onConfirm: (Picker picker, List<int> value) {
           _laps = value[0];
-          lapsDisplayed = _laps.toString().padLeft(2, '0');
+          // lapsDisplayed = _laps.toString().padLeft(2, '0');
+          lapsDisplayed = _laps.toString();
         });
     picker.show(scaffoldKey.currentState);
   }
@@ -157,13 +164,51 @@ class HomeController extends GetxController {
 
   void play() {
     appState = AppState.startedPlay;
-    _countDownSub =
-        CountdownTimerStream(counter: _eMin * 60 + _eSec).stream().listen((s) {
-      exerciseDisplayed = intTimeToString((s / 60).floor(), (s % 60).floor());
+    exercise();
+  }
+
+  void exercise() {
+    isExercise = true;
+    restDisplayed = intTimeToString(_rMin, _rSec);
+    lapCount++;
+    _countDownSub?.cancel();
+    _countDownSub = CountdownTimerStream(counter: _eMin * 60 + _eSec)
+        .stream()
+        .listen((sec) {
+      if (sec >= 0)
+        exerciseDisplayed =
+            intTimeToString((sec / 60).floor(), (sec % 60).floor());
+    }, onDone: () {
+      if (lapCount < _laps)
+        restTimer();
+      else {
+        //TODO display "Exercise Complete, Well done!" before "_clearFields();"
+        _clearFields();
+      }
     });
   }
 
-  void pause() {}
+  void restTimer() {
+    isExercise = false;
+    exerciseDisplayed = intTimeToString(_eMin, _eSec);
+    _countDownSub?.cancel();
+    _countDownSub = CountdownTimerStream(counter: _rMin * 60 + _rSec)
+        .stream()
+        .listen((sec) {
+      if (sec >= 0)
+        restDisplayed = intTimeToString((sec / 60).floor(), (sec % 60).floor());
+    }, onDone: exercise);
+  }
+
+  void pause() {
+    if (appState == AppState.startedPlay) {
+      _countDownSub.pause();
+      appState = AppState.startedPaused;
+    } else {
+      _countDownSub.resume();
+      appState = AppState.startedPlay;
+    }
+  }
 
   void stop() => _clearFields();
 }

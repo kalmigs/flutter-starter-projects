@@ -1,8 +1,8 @@
 class AppConst {
-  static const int eMin = 15;
-  static const int eSec = 0;
+  static const int eMin = 0;
+  static const int eSec = 10;
   static const int rMin = 0;
-  static const int rSec = 30;
+  static const int rSec = 05;
   static const int laps = 3;
 
   static const String eMinStr = 'eMin';
