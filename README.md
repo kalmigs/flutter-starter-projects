@@ -1,6 +1,6 @@
 # Flutter Starter Projects
 
-A collection of simple but complete flutter app projects.
+A collection of simple flutter projects.
 
 ## Project List
 
