@@ -15,4 +15,4 @@ A collection of simple but complete flutter app projects.
 
 ### API: Number Quotes
 
-![](assets/api_numbers.mp4?raw=true)
+![api_numbers](/assets/api_numbers.mp4)
