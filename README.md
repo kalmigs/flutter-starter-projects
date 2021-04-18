@@ -4,7 +4,7 @@ A collection of simple but complete flutter app projects.
 
 ## Project List
 
-* [API: Number Quotes](api-number-quotes)
+* [API: Number Quotes](#api-number-quotes)
   -  State Management: bloc
   -  API: http://numbersapi.com/
 * Pomodoro Timer
