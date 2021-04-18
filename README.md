@@ -10,3 +10,9 @@ A collection of simple but complete flutter app projects.
 * Pomodoro Timer
 * Exercise Timer
 * *More soon...*
+
+## Project Details
+
+### API: Number Quotes
+
+![](assets/api_numbers.mp4?raw=true)
